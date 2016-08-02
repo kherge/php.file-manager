@@ -36,10 +36,14 @@ Please refer to [`FileInterface`][] for documentation.
 
 ```php
 use KHerGe\File\File;
+use KHerGe\File\Memory;
 use KHerGe\File\Stream;
 
 // Create a manager for a file.
 $manager = new File('example.txt', 'r');
+
+// Create a manager for a string.
+$manager = new Memory('example contents', false);
 
 // Create a manager for a file stream.
 $manager = new Stream($stream);
