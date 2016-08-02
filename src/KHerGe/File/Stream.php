@@ -104,6 +104,8 @@ class Stream implements FileInterface
             );
             // @codeCoverageIgnoreEnd
         }
+
+        $this->stream = null;
     }
 
     /**
