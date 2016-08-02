@@ -1,0 +1,45 @@
+{
+    "type": "library",
+    "name": "kherge/file-manager",
+    "description": "Manages strict read and write operations.",
+    "keywords": ["file", "io", "read", "write"],
+    "license": [
+        "MIT",
+        "Apache-2.0"
+    ],
+    "support": {
+        "issues": "https://github.com/kherge/file-manager/issues",
+        "source": "https://github.com/kherge/file-manager"
+    },
+
+    "authors": [
+        {
+            "name": "Kevin Herrera",
+            "email": "kevin@herrera.io",
+            "homepage": "http://kevin.herrera.io/",
+            "role": "Developer"
+        }
+    ],
+
+    "autoload": {
+        "psr-4": {
+            "KHerGe\\File\\": "src/KHerGe/File"
+        }
+    },
+
+    "autoload-dev": {
+        "psr-4": {
+            "Test\\KHerGe\\File\\": "tests/KHerGe/File"
+        }
+    },
+
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.x-dev"
+        }
+    },
+
+    "require": {
+        "php": ">=5.6"
+    }
+}
