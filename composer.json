@@ -22,6 +22,9 @@
     ],
 
     "autoload": {
+        "files": [
+            "src/KHerGe/File/functions.php"
+        ],
         "psr-4": {
             "KHerGe\\File\\": "src/KHerGe/File"
         }
