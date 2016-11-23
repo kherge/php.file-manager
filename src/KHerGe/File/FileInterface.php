@@ -4,6 +4,7 @@ namespace KHerGe\File;
 
 use Generator;
 use KHerGe\File\Exception\CursorException;
+use KHerGe\File\Exception\LockException;
 use KHerGe\File\Exception\ReadException;
 use KHerGe\File\Exception\ResourceException;
 use KHerGe\File\Exception\WriteException;
@@ -86,6 +87,24 @@ interface FileInterface
      * @return Generator|string[] The contents of the file.
      */
     public function iterate($bytes = 0, $buffer = 1024);
+
+    /**
+     * Attempts to acquire a portable advisory lock.
+     *
+     * The `lock()` method will check to see if locking is supported and then
+     * attempt to create a lock by using `flock()`. If locking is not supported
+     * or if a lock could not be acquired, an exception is thrown.
+     *
+     * ```php
+     * $file->lock(true, true);
+     * ```
+     *
+     * @param boolean $exclusive   Is the lock exclusive?
+     * @param boolean $nonBlocking Is the lock non-blocking?
+     *
+     * @throws LockException If the lock could not be acquired.
+     */
+    public function lock($exclusive = false, $nonBlocking = false);
 
     /**
      * Reads the contents of the file.
@@ -195,6 +214,17 @@ interface FileInterface
      * @throws CursorException If the position could not be determined.
      */
     public function tell();
+
+    /**
+     * Attempts to release a portable advisory lock.
+     *
+     * ```php
+     * $file->unlock();
+     * ```
+     *
+     * @throws LockException If the lock could not be released.
+     */
+    public function unlock();
 
     /**
      * Writes the contents of a string to the file.

@@ -2,6 +2,7 @@
 
 namespace Test\KHerGe\File;
 
+use KHerGe\File\Exception\LockException;
 use KHerGe\File\Stream;
 use PHPUnit_Framework_TestCase as TestCase;
 
@@ -72,6 +73,35 @@ class StreamTest extends TestCase
             join('', iterator_to_array($this->manager->iterate(10))),
             'The file was not iterated properly.'
         );
+    }
+
+    /**
+     * Verify that the stream can be locked.
+     */
+    public function testLockTheStream()
+    {
+        $file = tempnam(sys_get_temp_dir(), 'fm-');
+        $manager = new Stream(fopen($file, 'c'));
+
+        $manager->lock(true, true);
+
+        return [$file, $manager];
+    }
+
+    /**
+     * @depends testLockTheStream
+     *
+     * Verify that acquiring a second lock throws an exception.
+     *
+     * @param string|Stream[] $args The test case dependencies.
+     */
+    public function testLockingAgainThrowsAnException(array $args)
+    {
+        $manager = new Stream(fopen($args[0], 'c'));
+
+        $this->expectException(LockException::class);
+
+        $manager->lock(true, true);
     }
 
     /**
@@ -164,6 +194,25 @@ class StreamTest extends TestCase
             $this->manager->tell(),
             'The internal cursor position was not determined properly.'
         );
+    }
+
+    /**
+     * @depends testLockTheStream
+     *
+     * Verify that the lock can be released.
+     *
+     * @param string|Stream[] $args The test case dependencies.
+     */
+    public function testUnlockTheStream(array $args)
+    {
+        $args[1]->unlock();
+
+        $manager = new Stream(fopen($args[0], 'c'));
+        $manager->lock(true, true);
+        $manager->unlock();
+
+        unset($manager);
+        unlink($args[0]);
     }
 
     /**

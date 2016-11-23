@@ -4,6 +4,7 @@ namespace KHerGe\File;
 
 use Generator;
 use KHerGe\File\Exception\CursorException;
+use KHerGe\File\Exception\LockException;
 use KHerGe\File\Exception\ReadException;
 use KHerGe\File\Exception\ResourceException;
 use KHerGe\File\Exception\WriteException;
@@ -77,6 +78,26 @@ class Stream implements FileInterface
 
         foreach ($generator as $yield) {
             yield $yield;
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function lock($exclusive = false, $nonBlocking = false)
+    {
+        $this->checkLockSupport();
+
+        $operations = $exclusive ? LOCK_EX : LOCK_SH;
+
+        if ($nonBlocking) {
+            $operations |= LOCK_NB;
+        }
+
+        if (!flock($this->stream, $operations)) {
+            throw new LockException(
+                'The file stream could not be locked.'
+            );
         }
     }
 
@@ -178,6 +199,22 @@ class Stream implements FileInterface
     /**
      * {@inheritdoc}
      */
+    public function unlock()
+    {
+        $this->checkLockSupport();
+
+        if (!flock($this->stream, LOCK_UN)) {
+            // @codeCoverageIgnoreStart
+            throw new LockException(
+                'The file stream could not be unlocked.'
+            );
+            // @codeCoverageIgnoreEnd
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function write($contents)
     {
         $wrote = fwrite($this->getStream(), $contents);
@@ -198,6 +235,22 @@ class Stream implements FileInterface
                     $wrote,
                     $bytes
                 )
+            );
+            // @codeCoverageIgnoreEnd
+        }
+    }
+
+    /**
+     * Checks to see if the stream supports locking.
+     *
+     * @throws LockException If locking is not supported.
+     */
+    private function checkLockSupport()
+    {
+        if (!stream_supports_lock($this->stream)) {
+            // @codeCoverageIgnoreStart
+            throw new LockException(
+                'The file stream does not support locking.'
             );
             // @codeCoverageIgnoreEnd
         }
