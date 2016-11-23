@@ -38,11 +38,9 @@ class File extends Stream
         $stream = fopen($path, $mode);
 
         if (!$stream) {
-            // @codeCoverageIgnoreStart
             throw new ResourceException(
                 "The file \"$path\" could not be opened ($mode)."
             );
-            // @codeCoverageIgnoreEnd
         }
 
         parent::__construct($stream);

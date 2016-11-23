@@ -51,11 +51,9 @@ class Stream implements FileInterface
         $content = fread($this->getStream(), 1);
 
         if (false === $content) {
-            // @codeCoverageIgnoreStart
             throw new CursorException(
                 'The file could not be read to trigger an EOF check.'
             );
-            // @codeCoverageIgnoreEnd
         }
 
         $eof = feof($this->getStream());
@@ -119,11 +117,9 @@ class Stream implements FileInterface
     public function release()
     {
         if (!fclose($this->getStream())) {
-            // @codeCoverageIgnoreStart
             throw new ResourceException(
                 'The file stream could not be closed.'
             );
-            // @codeCoverageIgnoreEnd
         }
 
         $this->stream = null;
@@ -135,11 +131,9 @@ class Stream implements FileInterface
     public function seek($position, $mode = self::EXACT)
     {
         if (-1 === fseek($this->getStream(), $position, $mode)) {
-            // @codeCoverageIgnoreStart
             throw new CursorException(
                 'The internal cursor for the file stream could not be moved.'
             );
-            // @codeCoverageIgnoreEnd
         }
     }
 
@@ -157,9 +151,7 @@ class Stream implements FileInterface
             $chunk = fread($stream, 8192);
 
             if (false === $chunk) {
-                // @codeCoverageIgnoreStart
                 throw new ReadException('The file stream could not be read.');
-                // @codeCoverageIgnoreEnd
             }
 
             $count += strlen($chunk);
@@ -186,11 +178,9 @@ class Stream implements FileInterface
         $position = ftell($this->getStream());
 
         if (false === $position) {
-            // @codeCoverageIgnoreStart
             throw new CursorException(
                 'The internal cursor position for the file stream could not be determined.'
             );
-            // @codeCoverageIgnoreEnd
         }
 
         return $position;
@@ -204,11 +194,9 @@ class Stream implements FileInterface
         $this->checkLockSupport();
 
         if (!flock($this->stream, LOCK_UN)) {
-            // @codeCoverageIgnoreStart
             throw new LockException(
                 'The file stream could not be unlocked.'
             );
-            // @codeCoverageIgnoreEnd
         }
     }
 
@@ -220,15 +208,12 @@ class Stream implements FileInterface
         $wrote = fwrite($this->getStream(), $contents);
 
         if (false === $wrote) {
-            // @codeCoverageIgnoreStart
             throw new WriteException(
                 'The string contents could not be written to the file stream.'
             );
-            // @codeCoverageIgnoreEnd
         }
 
         if (($bytes = strlen($contents)) !== $wrote) {
-            // @codeCoverageIgnoreStart
             throw new WriteException(
                 sprintf(
                     'Only %d of %d bytes could be written to the file stream.',
@@ -236,7 +221,6 @@ class Stream implements FileInterface
                     $bytes
                 )
             );
-            // @codeCoverageIgnoreEnd
         }
     }
 
@@ -248,11 +232,9 @@ class Stream implements FileInterface
     private function checkLockSupport()
     {
         if (!stream_supports_lock($this->stream)) {
-            // @codeCoverageIgnoreStart
             throw new LockException(
                 'The file stream does not support locking.'
             );
-            // @codeCoverageIgnoreEnd
         }
     }
 
@@ -266,11 +248,9 @@ class Stream implements FileInterface
     private function getStream()
     {
         if (null === $this->stream) {
-            // @codeCoverageIgnoreStart
             throw new ResourceException(
                 'The file stream is no longer available.'
             );
-            // @codeCoverageIgnoreEnd
         }
 
         return $this->stream;
@@ -291,11 +271,9 @@ class Stream implements FileInterface
             $chunk = fread($this->getStream(), $buffer);
 
             if (false === $chunk) {
-                // @codeCoverageIgnoreStart
                 throw new ReadException(
                     'The file stream could not be iterated.'
                 );
-                // @codeCoverageIgnoreEnd
             }
 
             yield $chunk;
@@ -324,11 +302,9 @@ class Stream implements FileInterface
             $chunk = fread($this->getStream(), $buffer);
 
             if (false === $chunk) {
-                // @codeCoverageIgnoreStart
                 throw new ReadException(
                     'The file stream could not be iterated.'
                 );
-                // @codeCoverageIgnoreEnd
             }
 
             $bytes -= strlen($chunk);
@@ -337,7 +313,6 @@ class Stream implements FileInterface
         } while (!$this->eof() && ($bytes > 0));
 
         if (0 !== $bytes) {
-            // @codeCoverageIgnoreStart
             throw new ReadException(
                 sprintf(
                     'Only %d of %d bytes could be iterated through the file stream.',
@@ -345,7 +320,6 @@ class Stream implements FileInterface
                     $total
                 )
             );
-            // @codeCoverageIgnoreEnd
         }
     }
 
@@ -365,9 +339,7 @@ class Stream implements FileInterface
             $chunk = fread($stream, 1024);
 
             if (false === $chunk) {
-                // @codeCoverageIgnoreStart
                 throw new ReadException('The file stream could not be read.');
-                // @codeCoverageIgnoreEnd
             }
 
             $buffer .= $chunk;
@@ -390,15 +362,12 @@ class Stream implements FileInterface
         $buffer = fread($this->getStream(), $bytes);
 
         if (false === $buffer) {
-            // @codeCoverageIgnoreStart
             throw new ReadException(
                 'The file stream could not be read.'
             );
-            // @codeCoverageIgnoreEnd
         }
 
         if (($read = strlen($buffer)) !== $bytes) {
-            // @codeCoverageIgnoreStart
             throw new ReadException(
                 sprintf(
                     'Only %d of %d bytes could be read from the file stream.',
@@ -406,7 +375,6 @@ class Stream implements FileInterface
                     $bytes
                 )
             );
-            // @codeCoverageIgnoreEnd
         }
 
         return $buffer;
