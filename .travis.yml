@@ -4,6 +4,7 @@ branches:
 
 install:
     - composer install
+    - composer require phpunit/phpunit=^5.0
 
 language: php
 
@@ -20,5 +21,7 @@ php:
     - 7.0
     - nightly
     - hhvm
+
+script: vendor/bin/phpunit
 
 sudo: false
