@@ -12,11 +12,16 @@ class Exception extends \Exception
     /**
      * Initializes the new exception.
      *
-     * @param string     $message  The exception message.
-     * @param \Exception $previous The previous exception.
+     * @param string     $format    The message format.
+     * @param mixed      $value,... A value to format.
+     * @param \Exception $previous  The previous exception.
      */
-    public function __construct($message = '', \Exception $previous = null)
+    public function __construct($format = '', ...$value)
     {
-        parent::__construct($message, 0, $previous);
+        $previous = (end($value) instanceof \Exception)
+            ? array_pop($value)
+            : null;
+
+        parent::__construct(vsprintf($format, $value), 0, $previous);
     }
 }

@@ -9,36 +9,64 @@ use PHPUnit_Framework_TestCase as TestCase;
  * Verifies that the base exception class functions as intended.
  *
  * @author Kevin Herrera <kevin@herrera.io>
+ *
+ * @coversDefaultClass \KHerGe\File\Exception\Exception
  */
 class ExceptionTest extends TestCase
 {
     /**
-     * Verify that a new exception can be created without arguments.
+     * Verify that an exception without a message can be instantiated.
+     *
+     * @covers ::__construct
      */
-    public function testCreateNewExceptionWithoutArguments()
+    public function testCreateAnExceptionWithoutAMessage()
     {
         new Exception();
     }
 
     /**
-     * Verify that a new exception can be created with arguments.
+     * Verify that the message for a new exception is formatted.
+     *
+     * @covers ::__construct
      */
-    public function testCreateNewExceptionWithArguments()
+    public function testCreateAnExceptionWithAFormattedMessage()
     {
-        $message = 'This is a test exception message.';
-        $previous = new \Exception();
-        $exception = new Exception($message, $previous);
+        $exception = new Exception(
+            'This is a %s message.',
+            'test'
+        );
 
         self::assertEquals(
-            $message,
+            'This is a test message.',
             $exception->getMessage(),
-            'The exception message was not set properly.'
+            'The message was not formatted correctly.'
+        );
+    }
+
+    /**
+     * Verify that a previous exception can be passed to the new exception.
+     *
+     * @covers ::__construct
+     */
+    public function testCreateAnExceptionWithAPreviousException()
+    {
+        $previous = new \Exception();
+        $exception = new Exception(
+            'This is a %s message.',
+            'test',
+            $previous
+        );
+
+        self::assertEquals(
+            'This is a test message.',
+            $exception->getMessage(),
+            'The message was not formatted correctly.'
         );
 
         self::assertSame(
             $previous,
             $exception->getPrevious(),
-            'The previous exception was not set.'
+            'The previous exception was not set correctly.'
         );
     }
 }
