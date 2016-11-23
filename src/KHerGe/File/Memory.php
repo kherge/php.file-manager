@@ -24,9 +24,11 @@ class Memory extends Stream
         $stream = fopen('php://memory', $append ? 'a+' : 'w+');
 
         if (!$stream) {
+            // @codeCoverageIgnoreStart
             throw new ResourceException(
                 'A new in memory file stream could not be created.'
             );
+            // @codeCoverageIgnoreEnd
         }
 
         parent::__construct($stream);
