@@ -78,7 +78,7 @@ function remove($path, $follow = false)
  * This function will recursively resolve a symbolic link until the final path
  * returned is a regular path or does not exist. This function will not verify
  * that the target path actually exists. To prevent recursive resolution of a
- * symoblic link, `$recursive` can be set to `false`.
+ * symbolic link, `$recursive` can be set to `false`.
  *
  * ```php
  * $real = resolve('/path/to/link');
