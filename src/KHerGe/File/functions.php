@@ -71,3 +71,48 @@ function remove($path, $follow = false)
         );
     }
 }
+
+/**
+ * Recursively resolves a symbolic link.
+ *
+ * This function will recursively resolve a symbolic link until the final path
+ * returned is a regular path or does not exist. This function will not verify
+ * that the target path actually exists. To prevent recursive resolution of a
+ * symoblic link, `$recursive` can be set to `false`.
+ *
+ * ```php
+ * $real = resolve('/path/to/link');
+ * ```
+ *
+ * @param string  $link      The name of the symbolic link.
+ * @param boolean $recursive Recursively resolve the link?
+ *
+ * @return string The path from the resolved symbolic link.
+ *
+ * @throws PathException If the symbolic link could not be resolved.
+ */
+function resolve($link, $recursive = true)
+{
+    if (!is_link($link)) {
+        throw new PathException(
+            'The path "%s" is not a symbolic link.',
+            $link
+        );
+    }
+
+    $real = $link;
+
+    do {
+        $real = readlink($real);
+
+        if (false === $real) {
+            throw new PathException(
+                'The symbolic link "%s" for "%s" could not be resolved.',
+                $real,
+                $link
+            );
+        }
+    } while ($recursive && is_link($real));
+
+    return $real;
+}
