@@ -5,6 +5,8 @@ namespace Test\KHerGe\File;
 use KHerGe\File\Exception\PathException;
 use PHPUnit_Framework_TestCase as TestCase;
 
+use function KHerGe\File\modified;
+use function KHerGe\File\permissions;
 use function KHerGe\File\remove;
 use function KHerGe\File\resolve;
 
@@ -15,6 +17,74 @@ use function KHerGe\File\resolve;
  */
 class functionsTest extends TestCase
 {
+    /**
+     * Verify that the last modified Unix timestamp can be retrieved.
+     *
+     * @covers \KHerGe\File\modified
+     */
+    public function testGetLastModifiedUnixTimestamp()
+    {
+        self::assertEquals(
+            filemtime(__FILE__),
+            modified(__FILE__),
+            'The last modified Unix timestamp was not returned.'
+        );
+    }
+
+    /**
+     * Verify that an exception is thrown if the path does not exist.
+     *
+     * @covers \KHerGe\File\modified
+     */
+    public function testGetLastModifiedUnixTimestampThrowsExceptionForNonExistentPath()
+    {
+        $path = '/does/not/exist';
+
+        $this->expectException(PathException::class);
+        $this->expectExceptionMessage(
+            sprintf(
+                'The path "%s" does not exist.',
+                $path
+            )
+        );
+
+        modified($path);
+    }
+
+    /**
+     * Verify that the Unix permissions can be retrieved.
+     *
+     * @covers \KHerGe\File\permissions
+     */
+    public function testGetUnixPermissions()
+    {
+        self::assertEquals(
+            fileperms(__FILE__),
+            permissions(__FILE__),
+            'The Unix permissions were not returned.'
+        );
+    }
+
+    /**
+     * Verify that an exception is thrown if the path does not exist.
+     *
+     * @covers \KHerGe\File\permissions
+     */
+    public function testGetUnixPermissionsThrowsExceptionForNonExistentPath()
+    {
+        $path = '/does/not/exist';
+
+        $this->expectException(PathException::class);
+        $this->expectExceptionMessage(
+            sprintf(
+                'The path "%s" does not exist.',
+                $path
+            )
+        );
+
+        permissions($path);
+    }
+
     /**
      * Verify that the a file path can be removed.
      *

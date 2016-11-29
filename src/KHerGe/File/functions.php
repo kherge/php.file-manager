@@ -5,6 +5,74 @@ namespace KHerGe\File;
 use KHerGe\File\Exception\PathException;
 
 /**
+ * Returns the last modified Unix timestamp for the given path.
+ *
+ * ```php
+ * $timestamp = modified('/path/to/file');
+ * ```
+ *
+ * @param string $path The path to read the last modified timestamp for.
+ *
+ * @return integer The Unix timestamp.
+ *
+ * @throws PathException If the last modified Unix timestamp could not be read.
+ */
+function modified($path)
+{
+    if (!file_exists($path)) {
+        throw new PathException(
+            'The path "%s" does not exist.',
+            $path
+        );
+    }
+
+    $timestamp = filemtime($path);
+
+    if (false === $timestamp) {
+        throw new PathException(
+            'The last modified Unix timestamp for the path "%s" could not be read.',
+            $path
+        );
+    }
+
+    return $timestamp;
+}
+
+/**
+ * Returns the Unix permissions for the given path.
+ *
+ * ```php
+ * $permissions = permissions('/path/to/file');
+ * ```
+ *
+ * @param string $path The path to read the permissions for.
+ *
+ * @return integer The Unix permissions.
+ *
+ * @throws PathException If the permissions could not be read.
+ */
+function permissions($path)
+{
+    if (!file_exists($path)) {
+        throw new PathException(
+            'The path "%s" does not exist.',
+            $path
+        );
+    }
+
+    $permissions = fileperms($path);
+
+    if (false === $permissions) {
+        throw new PathException(
+            'The permissions for the path "%s" could not be read.',
+            $path
+        );
+    }
+
+    return $permissions;
+}
+
+/**
  * Recursively removes a path from the file system.
  *
  * This function will delete a file path or recursively delete a directory path.
