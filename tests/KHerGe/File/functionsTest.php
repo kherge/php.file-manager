@@ -2,6 +2,7 @@
 
 namespace Test\KHerGe\File;
 
+use DateTime;
 use KHerGe\File\Exception\PathException;
 use PHPUnit_Framework_TestCase as TestCase;
 
@@ -32,11 +33,34 @@ class functionsTest extends TestCase
     }
 
     /**
+     * Verify that the last modified Unix timestamp can be set.
+     *
+     * @covers \KHerGe\File\modified
+     */
+    public function testSetLastModifiedUnixTimestamp()
+    {
+        $file = tempnam(sys_get_temp_dir(), 'fm-');
+        $time = (new DateTime('2016-01-02 03:04:05'))->getTimestamp();
+
+        self::assertEquals(
+            $time,
+            modified($file, $time),
+            'The last modified Unix timestamp was not returned.'
+        );
+
+        self::assertEquals(
+            $time,
+            filemtime($file),
+            'The last modified Unix timestamp was not set.'
+        );
+    }
+
+    /**
      * Verify that an exception is thrown if the path does not exist.
      *
      * @covers \KHerGe\File\modified
      */
-    public function testGetLastModifiedUnixTimestampThrowsExceptionForNonExistentPath()
+    public function testLastModifiedUnixTimestampThrowsExceptionForNonExistentPath()
     {
         $path = '/does/not/exist';
 
@@ -66,11 +90,34 @@ class functionsTest extends TestCase
     }
 
     /**
+     * Verify that the Unix permissions can be set.
+     *
+     * @covers \KHerGe\File\permissions
+     */
+    public function testSetUnixPermissions()
+    {
+        $file = tempnam(sys_get_temp_dir(), 'fm-');
+        $permissions = 0777;
+
+        self::assertEquals(
+            $permissions,
+            permissions(__FILE__, $permissions),
+            'The Unix permissions were not returned.'
+        );
+
+        self::assertNotEquals(
+            $permissions,
+            fileperms($file) & $permissions,
+            'The Unix permissions were not set.'
+        );
+    }
+
+    /**
      * Verify that an exception is thrown if the path does not exist.
      *
      * @covers \KHerGe\File\permissions
      */
-    public function testGetUnixPermissionsThrowsExceptionForNonExistentPath()
+    public function testUnixPermissionsThrowsExceptionForNonExistentPath()
     {
         $path = '/does/not/exist';
 

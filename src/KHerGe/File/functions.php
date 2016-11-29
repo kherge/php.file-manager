@@ -5,19 +5,24 @@ namespace KHerGe\File;
 use KHerGe\File\Exception\PathException;
 
 /**
- * Returns the last modified Unix timestamp for the given path.
+ * Sets or returns the last modified Unix timestamp for the given path.
  *
  * ```php
+ * // Return the last modified Unix timestamp.
  * $timestamp = modified('/path/to/file');
+ *
+ * // Set the last modified Unix timestamp.
+ * modified('/path/to/file', time());
  * ```
  *
- * @param string $path The path to read the last modified timestamp for.
+ * @param string       $path The path to read the last modified timestamp for.
+ * @param integer|null $time The new last modified timestamp.
  *
  * @return integer The Unix timestamp.
  *
  * @throws PathException If the last modified Unix timestamp could not be read.
  */
-function modified($path)
+function modified($path, $time = null)
 {
     if (!file_exists($path)) {
         throw new PathException(
@@ -26,32 +31,45 @@ function modified($path)
         );
     }
 
-    $timestamp = filemtime($path);
+    if (null === $time) {
+        $time = filemtime($path);
 
-    if (false === $timestamp) {
+        if (false === $time) {
+            throw new PathException(
+                'The last modified Unix timestamp for the path "%s" could not be read.',
+                $path
+            );
+        }
+    } elseif (!touch($path, $time)) {
         throw new PathException(
-            'The last modified Unix timestamp for the path "%s" could not be read.',
-            $path
+            'The last modified timestamp for the path "%s" could not be set to "%d".',
+            $path,
+            $time
         );
     }
 
-    return $timestamp;
+    return $time;
 }
 
 /**
- * Returns the Unix permissions for the given path.
+ * Sets or returns the Unix permissions for the given path.
  *
  * ```php
+ * // Returns the Unix permissions.
  * $permissions = permissions('/path/to/file');
+ *
+ * // Sets the Unix permissions.
+ * permissions('/path/to/file', 0644);
  * ```
  *
- * @param string $path The path to read the permissions for.
+ * @param string  $path        The path to read the permissions for.
+ * @param integer $permissions The new permissions as an octal value.
  *
  * @return integer The Unix permissions.
  *
  * @throws PathException If the permissions could not be read.
  */
-function permissions($path)
+function permissions($path, $permissions = null)
 {
     if (!file_exists($path)) {
         throw new PathException(
@@ -60,12 +78,18 @@ function permissions($path)
         );
     }
 
-    $permissions = fileperms($path);
+    if (null === $permissions) {
+        $permissions = fileperms($path);
 
-    if (false === $permissions) {
+        if (false === $permissions) {
+            throw new PathException(
+                'The permissions for the path "%s" could not be read.',
+                $path
+            );
+        }
+    } elseif (!chmod($path, $permissions)) {
         throw new PathException(
-            'The permissions for the path "%s" could not be read.',
-            $path
+            'The Unix permissions for the path "%s" could not be set to "%o".'
         );
     }
 
