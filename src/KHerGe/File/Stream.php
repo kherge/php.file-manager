@@ -225,6 +225,24 @@ class Stream implements FileInterface
     }
 
     /**
+     * Returns the file stream if it is available.
+     *
+     * @return resource The file stream.
+     *
+     * @throws ResourceException If the file stream is not available.
+     */
+    protected function getStream()
+    {
+        if (null === $this->stream) {
+            throw new ResourceException(
+                'The file stream is no longer available.'
+            );
+        }
+
+        return $this->stream;
+    }
+
+    /**
      * Checks to see if the stream supports locking.
      *
      * @throws LockException If locking is not supported.
@@ -236,24 +254,6 @@ class Stream implements FileInterface
                 'The file stream does not support locking.'
             );
         }
-    }
-
-    /**
-     * Returns the file stream if it is available.
-     *
-     * @return resource The file stream.
-     *
-     * @throws ResourceException If the file stream is not available.
-     */
-    private function getStream()
-    {
-        if (null === $this->stream) {
-            throw new ResourceException(
-                'The file stream is no longer available.'
-            );
-        }
-
-        return $this->stream;
     }
 
     /**
