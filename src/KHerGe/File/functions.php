@@ -3,6 +3,7 @@
 namespace KHerGe\File;
 
 use KHerGe\File\Exception\PathException;
+use KHerGe\File\Exception\TempException;
 
 /**
  * Sets or returns the last modified Unix timestamp for the given path.
@@ -207,4 +208,128 @@ function resolve($link, $recursive = true)
     } while ($recursive && is_link($real));
 
     return $real;
+}
+
+/**
+ * Creates a new temporary directory.
+ *
+ * ```php
+ * // Simple usage.
+ * $dir = create_temp_dir();
+ *
+ * // Using a file name template.
+ * $dir = create_temp_dir('my-%s-template');
+ *
+ * // Using an alternative temporary directory.
+ * $dir = create_temp_dir(null, '/path/to/dir');
+ * ```
+ *
+ * @param string      $template The directory name template.
+ * @param null|string $dir      The path to the temporary directory.
+ *
+ * @return string The path to the directory.
+ *
+ * @throws TempException If the directory could not be created.
+ */
+function temp_dir($template = null, $dir = null)
+{
+    $path = temp_path($template, $dir);
+
+    if (!mkdir($path)) {
+        throw new TempException(
+            'The temporary directory "%s" could not be created.',
+            $path
+        );
+    }
+
+    return $path;
+}
+
+/**
+ * Creates a new temporary file.
+ *
+ * ```php
+ * // Simple usage.
+ * $file = create_temp_file();
+ *
+ * // Using a file name template.
+ * $file = create_temp_file('my-%s-template.dat');
+ *
+ * // Using an alternative temporary directory.
+ * $file = create_temp_dir(null, '/path/to/dir');
+ * ```
+ *
+ * @param string      $template The file name template.
+ * @param null|string $dir      The path to the temporary directory.
+ *
+ * @return string The path to the file.
+ *
+ * @throws TempException If the file could not be created.
+ */
+function temp_file($template = null, $dir = null)
+{
+    $path = temp_path($template, $dir);
+    $handle = fopen($path, 'x');
+
+    if (false === $handle) {
+        throw new TempException(
+            'The temporary file "%s" could not be created.',
+            $path
+        );
+    }
+
+    fclose($handle);
+
+    return $path;
+}
+
+/**
+ * Generates a new temporary path.
+ *
+ * ```php
+ * // Simple usage.
+ * $path = temp_path();
+ *
+ * // Using a file name template.
+ * $path = temp_path('my-%s-template');
+ *
+ * // Using an alternative temporary directory.
+ * $path = temp_path(null, '/path/to/dir');
+ * ```
+ *
+ * @param string      $template The file name template.
+ * @param null|string $dir      The path to the temporary directory.
+ *
+ * @return string The path to the file.
+ *
+ * @throws TempException If the path could not be generated.
+ */
+function temp_path($template = null, $dir = null)
+{
+    if (null === $dir) {
+        $dir = sys_get_temp_dir();
+    } elseif (!is_dir($dir)) {
+        throw new TempException(
+            'The temporary directory "%s" does not exist.',
+            $dir
+        );
+    } elseif (!is_writable($dir)) {
+        throw new TempException(
+            'The temporary directory "%s" is not writable.',
+            $dir
+        );
+    }
+
+    if (null === $template) {
+        $template = sha1(uniqid('', true));
+    } elseif (false === strpos($template, '%s')) {
+        throw new TempException(
+            'The temporary path template "%s" does not contain "%%s".',
+            $template
+        );
+    } else {
+        $template = sprintf($template, sha1(uniqid('', true)));
+    }
+
+    return $dir . DIRECTORY_SEPARATOR . $template;
 }

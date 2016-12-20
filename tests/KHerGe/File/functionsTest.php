@@ -10,6 +10,9 @@ use function KHerGe\File\modified;
 use function KHerGe\File\permissions;
 use function KHerGe\File\remove;
 use function KHerGe\File\resolve;
+use function KHerGe\File\temp_dir;
+use function KHerGe\File\temp_file;
+use function KHerGe\File\temp_path;
 
 /**
  * Verifies that the library functions function (hah!) as intended.
@@ -321,5 +324,123 @@ class functionsTest extends TestCase
         unlink($a);
         unlink($b);
         unlink($c);
+    }
+
+    /**
+     * Verify that a new temporary directory is created.
+     *
+     * @covers \KHerGe\File\temp_dir
+     */
+    public function testCreateATemporaryDirectory()
+    {
+        $dir = temp_dir();
+
+        self::assertTrue(
+            is_dir($dir),
+            'The temporary directory was not created.'
+        );
+
+        rmdir($dir);
+    }
+
+    /**
+     * Verify that a new temporary directory is created using a template.
+     *
+     * @covers \KHerGe\File\temp_dir
+     */
+    public function testCreateATemporaryDirectoryUsingATemplate()
+    {
+        $dir = temp_dir('template-%s');
+
+        self::assertTrue(
+            is_dir($dir),
+            'The temporary directory was not created.'
+        );
+
+        self::assertContains(
+            'template-',
+            $dir,
+            'The directory name did not use the template.'
+        );
+
+        rmdir($dir);
+    }
+
+    /**
+     * Verify that a new temporary file is created.
+     *
+     * @covers \KHerGe\File\temp_file
+     */
+    public function testCreateATemporaryFile()
+    {
+        $file = temp_file();
+
+        self::assertTrue(
+            is_file($file),
+            'The temporary directory was not created.'
+        );
+
+        unlink($file);
+    }
+
+    /**
+     * Verify that a new temporary file is created using a template.
+     *
+     * @covers \KHerGe\File\temp_dir
+     */
+    public function testCreateATemporaryFileUsingATemplate()
+    {
+        $file = temp_file('template-%s');
+
+        self::assertTrue(
+            is_file($file),
+            'The temporary file was not created.'
+        );
+
+        self::assertContains(
+            'template-',
+            $file,
+            'The file name did not use the template.'
+        );
+
+        unlink($file);
+    }
+
+    /**
+     * Verify that a new temporary path can be generated.
+     *
+     * @covers \KHerGe\File\temp_path
+     */
+    public function testGenerateANewTemporaryPath()
+    {
+        $path = temp_path();
+
+        self::assertStringStartsWith(
+            sys_get_temp_dir(),
+            $path,
+            'The path is not in the temporary directory.'
+        );
+    }
+
+    /**
+     * Verify that a new temporary path can be generated using a template.
+     *
+     * @covers \KHerGe\File\temp_path
+     */
+    public function testGenerateANewTemporaryPathUsingATemplate()
+    {
+        $path = temp_path('template-%s');
+
+        self::assertStringStartsWith(
+            sys_get_temp_dir(),
+            $path,
+            'The path is not in the temporary directory.'
+        );
+
+        self::assertContains(
+            'template-',
+            $path,
+            'The path did not use the template.'
+        );
     }
 }
