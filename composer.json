@@ -8,8 +8,8 @@
         "Apache-2.0"
     ],
     "support": {
-        "issues": "https://github.com/kherge/file-manager/issues",
-        "source": "https://github.com/kherge/file-manager"
+        "issues": "https://github.com/kherge-php/file-manager/issues",
+        "source": "https://github.com/kherge-php/file-manager"
     },
 
     "authors": [
