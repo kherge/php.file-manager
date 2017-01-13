@@ -36,6 +36,10 @@
         }
     },
 
+    "conflict": {
+        "kherge/file": "<2.0"
+    },
+
     "extra": {
         "branch-alias": {
             "dev-master": "2.x-dev"
