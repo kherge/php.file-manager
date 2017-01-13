@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/kherge-php/file-manager.svg?branch=master)](https://travis-ci.org/kherge-php/file-manager)
+[![Packagist](https://img.shields.io/packagist/v/kherge/file-manager.svg)](https://packagist.org/packages/kherge/file-manager)
+[![Packagist Pre Release](https://img.shields.io/packagist/vpre/kherge/file-manager.svg)](https://packagist.org/packages/kherge/file-manager)
+
 File Manager
 ============
 
