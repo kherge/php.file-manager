@@ -7,6 +7,7 @@ use KHerGe\File\Exception\PathException;
 use PHPUnit_Framework_TestCase as TestCase;
 
 use function KHerGe\File\modified;
+use function KHerGe\File\duplicate;
 use function KHerGe\File\permissions;
 use function KHerGe\File\remove;
 use function KHerGe\File\resolve;
@@ -441,6 +442,110 @@ class functionsTest extends TestCase
             'template-',
             $path,
             'The path did not use the template.'
+        );
+    }
+
+    /**
+     * @depends testCreateATemporaryDirectory
+     *
+     * Verify that a directory path can be recursively copied.
+     *
+     * @covers \KHerGe\File\duplicate
+     */
+    public function testDuplicateADirectoryPath()
+    {
+        $a = temp_dir();
+        $b = temp_dir();
+
+        rmdir($b);
+        mkdir($a . '/sub/dir', 0755, true);
+        touch($a . '/sub/dir/file');
+
+        duplicate($a, $b);
+
+        self::assertFileExists(
+            $b . '/sub/dir/file',
+            'The directory path was not recursively copied.'
+        );
+    }
+
+    /**
+     * @depends testCreateATemporaryDirectory
+     *
+     * Verify that a directory path can be recursively copied to a limit.
+     *
+     * @covers \KHerGe\File\duplicate
+     */
+    public function testDuplicateADirectoryPathToALimit()
+    {
+        $a = temp_dir();
+        $b = temp_dir();
+
+        rmdir($b);
+        mkdir($a . '/sub/dir', 0755, true);
+        touch($a . '/sub/dir/file');
+
+        duplicate($a, $b, true, 3);
+
+        self::assertFileExists(
+            $b . '/sub/dir',
+            'The directory path was not copied deeply enough.'
+        );
+
+        self::assertFileNotExists(
+            $b . '/sub/dir/file',
+            'The directory path was copied too deeply.'
+        );
+    }
+
+    /**
+     * @depends testCreateATemporaryFile
+     *
+     * Verify that a file can be copied.
+     *
+     * @covers \KHerGe\File\duplicate
+     */
+    public function testDuplicateAFilePath()
+    {
+        $a = temp_file();
+        $b = temp_file();
+
+        unlink($b);
+
+        duplicate($a, $b);
+
+        self::assertFileExists(
+            $b,
+            'The file was not copied.'
+        );
+    }
+
+    /**
+     * @depends testCreateATemporaryFile
+     *
+     * Verify that an existing file is not overwritten.
+     *
+     * @covers \KHerGe\File\duplicate
+     */
+    public function testDuplicateAFileThatDoesNotOverwrite()
+    {
+        $a = temp_file();
+        $b = temp_file();
+
+        clearstatcache(true, $b);
+
+        $bm = filemtime($b) - 100;
+
+        touch($b, $bm);
+
+        duplicate($a, $b, false);
+
+        clearstatcache(true, $b);
+
+        self::assertEquals(
+            $bm,
+            filemtime($b),
+            'The file should not have been modified.'
         );
     }
 }
