@@ -24,8 +24,6 @@ class functionsTest extends TestCase
 {
     /**
      * Verify that the last modified Unix timestamp can be retrieved.
-     *
-     * @covers \KHerGe\File\modified
      */
     public function testGetLastModifiedUnixTimestamp()
     {
@@ -38,8 +36,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that the last modified Unix timestamp can be set.
-     *
-     * @covers \KHerGe\File\modified
      */
     public function testSetLastModifiedUnixTimestamp()
     {
@@ -61,8 +57,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that an exception is thrown if the path does not exist.
-     *
-     * @covers \KHerGe\File\modified
      */
     public function testLastModifiedUnixTimestampThrowsExceptionForNonExistentPath()
     {
@@ -81,8 +75,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that the Unix permissions can be retrieved.
-     *
-     * @covers \KHerGe\File\permissions
      */
     public function testGetUnixPermissions()
     {
@@ -95,8 +87,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that the Unix permissions can be set.
-     *
-     * @covers \KHerGe\File\permissions
      */
     public function testSetUnixPermissions()
     {
@@ -118,8 +108,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that an exception is thrown if the path does not exist.
-     *
-     * @covers \KHerGe\File\permissions
      */
     public function testUnixPermissionsThrowsExceptionForNonExistentPath()
     {
@@ -138,8 +126,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that the a file path can be removed.
-     *
-     * @covers \KHerGe\File\remove
      */
     public function testRemoveAFilePath()
     {
@@ -155,8 +141,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that remove a non-existent file path throws an exception.
-     *
-     * @covers \KHerGe\File\remove
      */
     public function testRemovingANonExistentPathThrowsAnException()
     {
@@ -175,8 +159,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that a directory path can be removed.
-     *
-     * @covers \KHerGe\File\remove
      */
     public function testRemoveADirectoryPath()
     {
@@ -196,8 +178,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that symlink'd directory contents are not removed.
-     *
-     * @covers \KHerGe\File\remove
      */
     public function testRemoveADirectoryLinkWithoutDeletingContents()
     {
@@ -227,8 +207,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that symlink'd directory contents are also removed.
-     *
-     * @covers \KHerGe\File\remove
      */
     public function testRemoveADirectoryLinkAndTheLinkedDirectoryContents()
     {
@@ -258,8 +236,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that a symbolic link can be resolved.
-     *
-     * @covers \KHerGe\File\resolve
      */
     public function testResolveASymbolicLink()
     {
@@ -281,8 +257,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that resolving a regular path as a symbolic link throws an exception.
-     *
-     * @covers \KHerGe\File\resolve
      */
     public function testResolvingARegularPathAsASymbolicLinkThrowsAnException()
     {
@@ -301,8 +275,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that a symbolic link is recursively resolved.
-     *
-     * @covers \KHerGe\File\resolve
      */
     public function testRecursivelyResolveASymbolicLink()
     {
@@ -329,8 +301,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that a new temporary directory is created.
-     *
-     * @covers \KHerGe\File\temp_dir
      */
     public function testCreateATemporaryDirectory()
     {
@@ -346,8 +316,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that a new temporary directory is created using a template.
-     *
-     * @covers \KHerGe\File\temp_dir
      */
     public function testCreateATemporaryDirectoryUsingATemplate()
     {
@@ -369,8 +337,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that a new temporary file is created.
-     *
-     * @covers \KHerGe\File\temp_file
      */
     public function testCreateATemporaryFile()
     {
@@ -386,8 +352,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that a new temporary file is created using a template.
-     *
-     * @covers \KHerGe\File\temp_dir
      */
     public function testCreateATemporaryFileUsingATemplate()
     {
@@ -409,8 +373,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that a new temporary path can be generated.
-     *
-     * @covers \KHerGe\File\temp_path
      */
     public function testGenerateANewTemporaryPath()
     {
@@ -425,8 +387,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that a new temporary path can be generated using a template.
-     *
-     * @covers \KHerGe\File\temp_path
      */
     public function testGenerateANewTemporaryPathUsingATemplate()
     {
@@ -449,8 +409,6 @@ class functionsTest extends TestCase
      * @depends testCreateATemporaryDirectory
      *
      * Verify that a directory path can be recursively copied.
-     *
-     * @covers \KHerGe\File\duplicate
      */
     public function testDuplicateADirectoryPath()
     {
@@ -473,8 +431,6 @@ class functionsTest extends TestCase
      * @depends testCreateATemporaryDirectory
      *
      * Verify that a directory path can be recursively copied to a limit.
-     *
-     * @covers \KHerGe\File\duplicate
      */
     public function testDuplicateADirectoryPathToALimit()
     {
@@ -502,8 +458,6 @@ class functionsTest extends TestCase
      * @depends testCreateATemporaryFile
      *
      * Verify that a file can be copied.
-     *
-     * @covers \KHerGe\File\duplicate
      */
     public function testDuplicateAFilePath()
     {
@@ -524,8 +478,6 @@ class functionsTest extends TestCase
      * @depends testCreateATemporaryFile
      *
      * Verify that an existing file is not overwritten.
-     *
-     * @covers \KHerGe\File\duplicate
      */
     public function testDuplicateAFileThatDoesNotOverwrite()
     {
