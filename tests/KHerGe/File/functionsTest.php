@@ -7,6 +7,7 @@ use KHerGe\File\Exception\PathException;
 use PHPUnit_Framework_TestCase as TestCase;
 
 use function KHerGe\File\modified;
+use function KHerGe\File\duplicate;
 use function KHerGe\File\permissions;
 use function KHerGe\File\remove;
 use function KHerGe\File\resolve;
@@ -23,8 +24,6 @@ class functionsTest extends TestCase
 {
     /**
      * Verify that the last modified Unix timestamp can be retrieved.
-     *
-     * @covers \KHerGe\File\modified
      */
     public function testGetLastModifiedUnixTimestamp()
     {
@@ -37,8 +36,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that the last modified Unix timestamp can be set.
-     *
-     * @covers \KHerGe\File\modified
      */
     public function testSetLastModifiedUnixTimestamp()
     {
@@ -60,8 +57,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that an exception is thrown if the path does not exist.
-     *
-     * @covers \KHerGe\File\modified
      */
     public function testLastModifiedUnixTimestampThrowsExceptionForNonExistentPath()
     {
@@ -80,8 +75,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that the Unix permissions can be retrieved.
-     *
-     * @covers \KHerGe\File\permissions
      */
     public function testGetUnixPermissions()
     {
@@ -94,8 +87,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that the Unix permissions can be set.
-     *
-     * @covers \KHerGe\File\permissions
      */
     public function testSetUnixPermissions()
     {
@@ -117,8 +108,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that an exception is thrown if the path does not exist.
-     *
-     * @covers \KHerGe\File\permissions
      */
     public function testUnixPermissionsThrowsExceptionForNonExistentPath()
     {
@@ -137,8 +126,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that the a file path can be removed.
-     *
-     * @covers \KHerGe\File\remove
      */
     public function testRemoveAFilePath()
     {
@@ -154,8 +141,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that remove a non-existent file path throws an exception.
-     *
-     * @covers \KHerGe\File\remove
      */
     public function testRemovingANonExistentPathThrowsAnException()
     {
@@ -174,8 +159,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that a directory path can be removed.
-     *
-     * @covers \KHerGe\File\remove
      */
     public function testRemoveADirectoryPath()
     {
@@ -195,8 +178,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that symlink'd directory contents are not removed.
-     *
-     * @covers \KHerGe\File\remove
      */
     public function testRemoveADirectoryLinkWithoutDeletingContents()
     {
@@ -226,8 +207,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that symlink'd directory contents are also removed.
-     *
-     * @covers \KHerGe\File\remove
      */
     public function testRemoveADirectoryLinkAndTheLinkedDirectoryContents()
     {
@@ -257,8 +236,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that a symbolic link can be resolved.
-     *
-     * @covers \KHerGe\File\resolve
      */
     public function testResolveASymbolicLink()
     {
@@ -280,8 +257,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that resolving a regular path as a symbolic link throws an exception.
-     *
-     * @covers \KHerGe\File\resolve
      */
     public function testResolvingARegularPathAsASymbolicLinkThrowsAnException()
     {
@@ -300,8 +275,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that a symbolic link is recursively resolved.
-     *
-     * @covers \KHerGe\File\resolve
      */
     public function testRecursivelyResolveASymbolicLink()
     {
@@ -328,8 +301,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that a new temporary directory is created.
-     *
-     * @covers \KHerGe\File\temp_dir
      */
     public function testCreateATemporaryDirectory()
     {
@@ -345,8 +316,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that a new temporary directory is created using a template.
-     *
-     * @covers \KHerGe\File\temp_dir
      */
     public function testCreateATemporaryDirectoryUsingATemplate()
     {
@@ -368,8 +337,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that a new temporary file is created.
-     *
-     * @covers \KHerGe\File\temp_file
      */
     public function testCreateATemporaryFile()
     {
@@ -385,8 +352,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that a new temporary file is created using a template.
-     *
-     * @covers \KHerGe\File\temp_dir
      */
     public function testCreateATemporaryFileUsingATemplate()
     {
@@ -408,8 +373,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that a new temporary path can be generated.
-     *
-     * @covers \KHerGe\File\temp_path
      */
     public function testGenerateANewTemporaryPath()
     {
@@ -424,8 +387,6 @@ class functionsTest extends TestCase
 
     /**
      * Verify that a new temporary path can be generated using a template.
-     *
-     * @covers \KHerGe\File\temp_path
      */
     public function testGenerateANewTemporaryPathUsingATemplate()
     {
@@ -441,6 +402,102 @@ class functionsTest extends TestCase
             'template-',
             $path,
             'The path did not use the template.'
+        );
+    }
+
+    /**
+     * @depends testCreateATemporaryDirectory
+     *
+     * Verify that a directory path can be recursively copied.
+     */
+    public function testDuplicateADirectoryPath()
+    {
+        $a = temp_dir();
+        $b = temp_dir();
+
+        rmdir($b);
+        mkdir($a . '/sub/dir', 0755, true);
+        touch($a . '/sub/dir/file');
+
+        duplicate($a, $b);
+
+        self::assertFileExists(
+            $b . '/sub/dir/file',
+            'The directory path was not recursively copied.'
+        );
+    }
+
+    /**
+     * @depends testCreateATemporaryDirectory
+     *
+     * Verify that a directory path can be recursively copied to a limit.
+     */
+    public function testDuplicateADirectoryPathToALimit()
+    {
+        $a = temp_dir();
+        $b = temp_dir();
+
+        rmdir($b);
+        mkdir($a . '/sub/dir', 0755, true);
+        touch($a . '/sub/dir/file');
+
+        duplicate($a, $b, true, 3);
+
+        self::assertFileExists(
+            $b . '/sub/dir',
+            'The directory path was not copied deeply enough.'
+        );
+
+        self::assertFileNotExists(
+            $b . '/sub/dir/file',
+            'The directory path was copied too deeply.'
+        );
+    }
+
+    /**
+     * @depends testCreateATemporaryFile
+     *
+     * Verify that a file can be copied.
+     */
+    public function testDuplicateAFilePath()
+    {
+        $a = temp_file();
+        $b = temp_file();
+
+        unlink($b);
+
+        duplicate($a, $b);
+
+        self::assertFileExists(
+            $b,
+            'The file was not copied.'
+        );
+    }
+
+    /**
+     * @depends testCreateATemporaryFile
+     *
+     * Verify that an existing file is not overwritten.
+     */
+    public function testDuplicateAFileThatDoesNotOverwrite()
+    {
+        $a = temp_file();
+        $b = temp_file();
+
+        clearstatcache(true, $b);
+
+        $bm = filemtime($b) - 100;
+
+        touch($b, $bm);
+
+        duplicate($a, $b, false);
+
+        clearstatcache(true, $b);
+
+        self::assertEquals(
+            $bm,
+            filemtime($b),
+            'The file should not have been modified.'
         );
     }
 }

@@ -6,6 +6,92 @@ use KHerGe\File\Exception\PathException;
 use KHerGe\File\Exception\TempException;
 
 /**
+ * Recursively copies a path to another path.
+ *
+ * ```php
+ * // Copy an individual file.
+ * duplicate('/path/to/file.a', '/path/to/file.b');
+ *
+ * // Copy an entire directory.
+ * duplicate('/path/to/dir/a', '/path/to/dir/b');
+ * ```
+ *
+ * If a depth of `0` is provided, the function will immediately return
+ * and not copy any path. If a depth of `1` is provided, then only the
+ * immediate path provided is copied.
+ *
+ * @param string  $from      The path to copy from.
+ * @param string  $to        The path to copy to.
+ * @param boolean $overwrite Overwrite existing files?
+ * @param integer $depth     The maximum depth to copy (-1 means no limit).
+ *
+ * @throws PathException If the path could not be copied.
+ */
+function duplicate($from, $to, $overwrite = true, $depth = -1)
+{
+    if (0 === $depth) {
+        return;
+    }
+
+    if (!file_exists($from)) {
+        throw new PathException(
+            'The path "%s" does not exist.',
+            $from
+        );
+    }
+
+    $parent = dirname($to);
+
+    if (!is_dir($parent)) {
+        throw new PathException(
+            'The parent path "%s" does not exist.',
+            $parent
+        );
+    }
+
+    if (is_dir($from)) {
+        if (!is_dir($to) && !mkdir($to)) {
+            throw new PathException(
+                'The directory "%s" could not be created.',
+                $to
+            );
+        }
+
+        $handle = opendir($from);
+
+        if (false === $handle) {
+            throw new PathException(
+                'The directory "%s" could not be read.',
+                $from
+            );
+        }
+
+        while (false !== ($entry = readdir($handle))) {
+            if (('.' === $entry) || ('..' === $entry)) {
+                continue;
+            }
+
+            duplicate(
+                $from . DIRECTORY_SEPARATOR . $entry,
+                $to . DIRECTORY_SEPARATOR . $entry,
+                $overwrite,
+                (-1 === $depth) ? $depth : $depth - 1
+            );
+        }
+
+        closedir($handle);
+    } elseif (!$overwrite && file_exists($to)) {
+        // Intentionally do nothing.
+    } elseif (!copy($from, $to)) {
+        throw new PathException(
+            'The file "%s" could not be copied to "%s".',
+            $from,
+            $to
+        );
+    }
+}
+
+/**
  * Sets or returns the last modified Unix timestamp for the given path.
  *
  * ```php
